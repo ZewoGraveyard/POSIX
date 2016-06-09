@@ -153,7 +153,7 @@ public enum SystemError: ErrorProtocol {
 
 extension SystemError {
     public init?(errorNumber: Int32) {
-        switch errno {
+        switch errorNumber {
         case 0: return nil
 
         case EPERM: self = .operationNotPermitted

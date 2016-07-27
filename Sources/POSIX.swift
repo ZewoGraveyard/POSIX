@@ -28,7 +28,7 @@
     @_exported import Darwin.C
 #endif
 
-public enum SystemError: ErrorProtocol {
+public enum SystemError: Error {
     case operationNotPermitted
     case noSuchFileOrDirectory
     case noSuchProcess
@@ -282,126 +282,126 @@ extension SystemError {
 extension SystemError {
     public var errorNumber: Int32 {
         switch self {
-        case operationNotPermitted: return EPERM
-        case noSuchFileOrDirectory: return ENOENT
-        case noSuchProcess: return ESRCH
-        case interruptedSystemCall: return EINTR
-        case inputOutputError: return EIO
-        case deviceNotConfigured: return ENXIO
-        case argumentListTooLong: return E2BIG
-        case executableFormatError: return ENOEXEC
-        case badFileDescriptor: return EBADF
-        case noChildProcesses: return ECHILD
-        case resourceDeadlockAvoided: return EDEADLK
-        case cannotAllocateMemory: return ENOMEM
-        case permissionDenied: return EACCES
-        case badAddress: return EFAULT
+        case .operationNotPermitted: return EPERM
+        case .noSuchFileOrDirectory: return ENOENT
+        case .noSuchProcess: return ESRCH
+        case .interruptedSystemCall: return EINTR
+        case .inputOutputError: return EIO
+        case .deviceNotConfigured: return ENXIO
+        case .argumentListTooLong: return E2BIG
+        case .executableFormatError: return ENOEXEC
+        case .badFileDescriptor: return EBADF
+        case .noChildProcesses: return ECHILD
+        case .resourceDeadlockAvoided: return EDEADLK
+        case .cannotAllocateMemory: return ENOMEM
+        case .permissionDenied: return EACCES
+        case .badAddress: return EFAULT
 
-        case blockDeviceRequired: return ENOTBLK
+        case .blockDeviceRequired: return ENOTBLK
 
-        case deviceOrResourceBusy: return EBUSY
-        case fileExists: return EEXIST
-        case crossDeviceLink: return EXDEV
-        case operationNotSupportedByDevice: return ENODEV
-        case notADirectory: return ENOTDIR
-        case isADirectory: return EISDIR
-        case invalidArgument: return EINVAL
-        case tooManyOpenFilesInSystem: return ENFILE
-        case tooManyOpenFiles: return EMFILE
-        case inappropriateInputOutputControlForDevice: return ENOTTY
-        case textFileBusy: return ETXTBSY
-        case fileTooLarge: return EFBIG
-        case noSpaceLeftOnDevice: return ENOSPC
-        case illegalSeek: return ESPIPE
-        case readOnlyFileSystem: return EROFS
-        case tooManyLinks: return EMLINK
-        case brokenPipe: return EPIPE
+        case .deviceOrResourceBusy: return EBUSY
+        case .fileExists: return EEXIST
+        case .crossDeviceLink: return EXDEV
+        case .operationNotSupportedByDevice: return ENODEV
+        case .notADirectory: return ENOTDIR
+        case .isADirectory: return EISDIR
+        case .invalidArgument: return EINVAL
+        case .tooManyOpenFilesInSystem: return ENFILE
+        case .tooManyOpenFiles: return EMFILE
+        case .inappropriateInputOutputControlForDevice: return ENOTTY
+        case .textFileBusy: return ETXTBSY
+        case .fileTooLarge: return EFBIG
+        case .noSpaceLeftOnDevice: return ENOSPC
+        case .illegalSeek: return ESPIPE
+        case .readOnlyFileSystem: return EROFS
+        case .tooManyLinks: return EMLINK
+        case .brokenPipe: return EPIPE
 
         /* math software */
-        case numericalArgumentOutOfDomain: return EDOM
-        case resultTooLarge: return ERANGE
+        case .numericalArgumentOutOfDomain: return EDOM
+        case .resultTooLarge: return ERANGE
 
         /* non-blocking and interrupt i/o */
-        case resourceTemporarilyUnavailable: return EAGAIN
-        case operationWouldBlock: return EWOULDBLOCK
-        case operationNowInProgress: return EINPROGRESS
-        case operationAlreadyInProgress: return EALREADY
+        case .resourceTemporarilyUnavailable: return EAGAIN
+        case .operationWouldBlock: return EWOULDBLOCK
+        case .operationNowInProgress: return EINPROGRESS
+        case .operationAlreadyInProgress: return EALREADY
 
         /* ipc/network software -- argument errors */
-        case socketOperationOnNonSocket: return ENOTSOCK
-        case destinationAddressRequired: return EDESTADDRREQ
-        case messageTooLong: return EMSGSIZE
-        case protocolWrongTypeForSocket: return EPROTOTYPE
-        case protocolNotAvailable: return ENOPROTOOPT
-        case protocolNotSupported: return EPROTONOSUPPORT
+        case .socketOperationOnNonSocket: return ENOTSOCK
+        case .destinationAddressRequired: return EDESTADDRREQ
+        case .messageTooLong: return EMSGSIZE
+        case .protocolWrongTypeForSocket: return EPROTOTYPE
+        case .protocolNotAvailable: return ENOPROTOOPT
+        case .protocolNotSupported: return EPROTONOSUPPORT
 
-        case socketTypeNotSupported: return ESOCKTNOSUPPORT
+        case .socketTypeNotSupported: return ESOCKTNOSUPPORT
 
-        case operationNotSupported: return ENOTSUP
+        case .operationNotSupported: return ENOTSUP
 
-        case protocolFamilyNotSupported: return EPFNOSUPPORT
+        case .protocolFamilyNotSupported: return EPFNOSUPPORT
 
-        case addressFamilyNotSupportedByProtocolFamily: return EAFNOSUPPORT
-        case addressAlreadyInUse: return EADDRINUSE
-        case cannotAssignRequestedAddress: return EADDRNOTAVAIL
+        case .addressFamilyNotSupportedByProtocolFamily: return EAFNOSUPPORT
+        case .addressAlreadyInUse: return EADDRINUSE
+        case .cannotAssignRequestedAddress: return EADDRNOTAVAIL
 
         /* ipc/network software -- operational errors */
-        case networkIsDown: return ENETDOWN
-        case networkIsUnreachable: return ENETUNREACH
-        case networkDroppedConnectionOnReset: return ENETRESET
-        case softwareCausedConnectionAbort: return ECONNABORTED
-        case connectionResetByPeer: return ECONNRESET
-        case noBufferSpaceAvailable: return ENOBUFS
-        case socketIsAlreadyConnected: return EISCONN
-        case socketIsNotConnected: return ENOTCONN
+        case .networkIsDown: return ENETDOWN
+        case .networkIsUnreachable: return ENETUNREACH
+        case .networkDroppedConnectionOnReset: return ENETRESET
+        case .softwareCausedConnectionAbort: return ECONNABORTED
+        case .connectionResetByPeer: return ECONNRESET
+        case .noBufferSpaceAvailable: return ENOBUFS
+        case .socketIsAlreadyConnected: return EISCONN
+        case .socketIsNotConnected: return ENOTCONN
 
-        case cannotSendAfterSocketShutdown: return ESHUTDOWN
-        case tooManyReferences: return ETOOMANYREFS
+        case .cannotSendAfterSocketShutdown: return ESHUTDOWN
+        case .tooManyReferences: return ETOOMANYREFS
 
-        case operationTimedOut: return ETIMEDOUT
-        case connectionRefused: return ECONNREFUSED
+        case .operationTimedOut: return ETIMEDOUT
+        case .connectionRefused: return ECONNREFUSED
 
-        case tooManyLevelsOfSymbolicLinks: return ELOOP
-        case fileNameTooLong: return ENAMETOOLONG
+        case .tooManyLevelsOfSymbolicLinks: return ELOOP
+        case .fileNameTooLong: return ENAMETOOLONG
 
-        case hostIsDown: return EHOSTDOWN
+        case .hostIsDown: return EHOSTDOWN
 
-        case noRouteToHost: return EHOSTUNREACH
-        case directoryNotEmpty: return ENOTEMPTY
+        case .noRouteToHost: return EHOSTUNREACH
+        case .directoryNotEmpty: return ENOTEMPTY
 
         /* quotas & mush */
-        case tooManyUsers: return EUSERS
+        case .tooManyUsers: return EUSERS
 
-        case diskQuotaExceeded: return EDQUOT
+        case .diskQuotaExceeded: return EDQUOT
 
         /* Network File System */
-        case staleFileHandle: return ESTALE
-        case objectIsRemote: return EREMOTE
+        case .staleFileHandle: return ESTALE
+        case .objectIsRemote: return EREMOTE
 
-        case noLocksAvailable: return ENOLCK
-        case functionNotImplemented: return ENOSYS
+        case .noLocksAvailable: return ENOLCK
+        case .functionNotImplemented: return ENOSYS
 
-        case valueTooLargeForDefinedDataType: return EOVERFLOW
+        case .valueTooLargeForDefinedDataType: return EOVERFLOW
 
-        case operationCanceled: return ECANCELED
+        case .operationCanceled: return ECANCELED
 
-        case identifierRemoved: return EIDRM
-        case noMessageOfDesiredType: return ENOMSG
-        case illegalByteSequence: return EILSEQ
+        case .identifierRemoved: return EIDRM
+        case .noMessageOfDesiredType: return ENOMSG
+        case .illegalByteSequence: return EILSEQ
             
-        case badMessage: return EBADMSG
-        case multihopAttempted: return EMULTIHOP
-        case noDataAvailable: return ENODATA
-        case linkHasBeenSevered: return ENOLINK
-        case outOfStreamsResources: return ENOSR
-        case deviceNotAStream: return ENOSTR
-        case protocolError: return EPROTO
-        case timerExpired: return ETIME
+        case .badMessage: return EBADMSG
+        case .multihopAttempted: return EMULTIHOP
+        case .noDataAvailable: return ENODATA
+        case .linkHasBeenSevered: return ENOLINK
+        case .outOfStreamsResources: return ENOSR
+        case .deviceNotAStream: return ENOSTR
+        case .protocolError: return EPROTO
+        case .timerExpired: return ETIME
 
-        case stateNotRecoverable: return ENOTRECOVERABLE
-        case previousOwnerDied: return EOWNERDEAD
+        case .stateNotRecoverable: return ENOTRECOVERABLE
+        case .previousOwnerDied: return EOWNERDEAD
 
-        case other(let errorNumber): return errorNumber
+        case .other(let errorNumber): return errorNumber
         }
     }
 }

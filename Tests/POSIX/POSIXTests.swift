@@ -8,7 +8,7 @@ class POSIXTests: XCTestCase {
 }
 
 extension POSIXTests {
-    static var allTests : [(String, POSIXTests -> () throws -> Void)] {
+    static var allTests : [(String, (POSIXTests) -> () throws -> Void)] {
         return [
            ("testReality", testReality),
         ]

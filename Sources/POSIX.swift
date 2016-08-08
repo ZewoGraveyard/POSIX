@@ -28,7 +28,7 @@
     @_exported import Darwin.C
 #endif
 
-public enum SystemError: Error {
+public enum SystemError : Error {
     case operationNotPermitted
     case noSuchFileOrDirectory
     case noSuchProcess
@@ -262,7 +262,7 @@ extension SystemError {
         case EIDRM: self = .identifierRemoved
         case ENOMSG: self = .noMessageOfDesiredType
         case EILSEQ: self = .illegalByteSequence
-            
+
         case EBADMSG: self = .badMessage
         case EMULTIHOP: self = .multihopAttempted
         case ENODATA: self = .noDataAvailable
@@ -388,7 +388,7 @@ extension SystemError {
         case .identifierRemoved: return EIDRM
         case .noMessageOfDesiredType: return ENOMSG
         case .illegalByteSequence: return EILSEQ
-            
+
         case .badMessage: return EBADMSG
         case .multihopAttempted: return EMULTIHOP
         case .noDataAvailable: return ENODATA
@@ -406,13 +406,19 @@ extension SystemError {
     }
 }
 
+extension SystemError : Equatable {}
+
+public func == (lhs: SystemError, rhs: SystemError) -> Bool {
+    return lhs.errorNumber == rhs.errorNumber
+}
+
 extension SystemError {
     public static func description(for errorNumber: Int32) -> String {
         return String(cString: strerror(errorNumber))
     }
 }
 
-extension SystemError: CustomStringConvertible {
+extension SystemError : CustomStringConvertible {
     public var description: String {
         return SystemError.description(for: errorNumber)
     }

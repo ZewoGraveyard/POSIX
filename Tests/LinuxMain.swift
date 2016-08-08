@@ -1,10 +1,6 @@
-#if os(Linux)
-
 import XCTest
-@testable import POSIXTestSuite
+@testable import POSIXTests
 
 XCTMain([
     testCase(POSIXTests.allTests)
 ])
-
-#endif

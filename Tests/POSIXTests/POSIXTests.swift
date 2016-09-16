@@ -96,7 +96,7 @@ let map: [Int32: SystemError] = [
     666: .other(errorNumber: 666)
 ]
 
-class POSIXTests: XCTestCase {
+public class POSIXTests : XCTestCase {
     func testCreation() {
         XCTAssertNil(SystemError(errorNumber: 0))
         for (errorNumber, error) in map {
@@ -133,7 +133,7 @@ class POSIXTests: XCTestCase {
 }
 
 extension POSIXTests {
-    static var allTests : [(String, (POSIXTests) -> () throws -> Void)] {
+    public static var allTests: [(String, (POSIXTests) -> () throws -> Void)] {
         return [
             ("testCreation", testCreation),
             ("testDescription", testDescription),

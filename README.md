@@ -1,7 +1,6 @@
 # POSIX
 
 [![Swift][swift-badge]][swift-url]
-[![Platform][platform-badge]][platform-url]
 [![License][mit-badge]][mit-url]
 [![Slack][slack-badge]][slack-url]
 [![Travis][travis-badge]][travis-url]

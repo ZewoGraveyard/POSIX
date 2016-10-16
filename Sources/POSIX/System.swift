@@ -4,6 +4,8 @@
     import Darwin.C
 #endif
 
+
+#if !os(watchOS) && !os(tvOS)
 public func system(_ arguments: [String]) throws {
     fflush(stdout)
     guard !arguments.isEmpty else {
@@ -17,3 +19,4 @@ public func system(_ arguments: [String]) throws {
         throw SpawnError.exitStatus(exitStatus, arguments)
     }
 }
+#endif

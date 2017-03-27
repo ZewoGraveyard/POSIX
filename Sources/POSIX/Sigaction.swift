@@ -105,7 +105,7 @@ public protocol SignalHandlerDelegate {
 /// a normal singleton implementation.
 public struct Signal {
     /// Delegate. It can respond to signal events.
-    static var delegate : SignalHandlerDelegate?
+    public static var delegate : SignalHandlerDelegate?
     
     /// Adjusts how a given signal will be handled when delivered to the process.
     /// - parameters:

@@ -111,7 +111,7 @@ public struct Signal {
     /// - parameters:
     ///     - signal: Signal to add treatment to
     ///     - action: What to do when the signal is delivered.
-    static func setTrap(signal: SignalType, action: SignalAction) {
+    public static func setTrap(signal: SignalType, action: SignalAction) {
         CPOSIXInstallSignalHandler(signal.rawValue, action.rawValue) { (signal) in
             Signal.handleSignal(signal: signal)
         }
@@ -122,11 +122,11 @@ public struct Signal {
     /// - parameters:
     ///     - pid: The pid to send the signal to. Defaults to current process
     ///     - signal: What signal to send.
-    static func killPid(pid: pid_t = getpid(), signal: SignalType) {
+    public static func killPid(pid: pid_t = getpid(), signal: SignalType) {
         kill(pid, signal.rawValue)
     }
     
-    /// Signal handler. Wrapps a call to the delegate, if available.
+    /// Signal handler. Wraps a call to the delegate, if available.
     /// - parameters:
     ///     - signal: Signal delivered to the process.
     static func handleSignal(signal: Int32) {

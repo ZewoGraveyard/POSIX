@@ -89,14 +89,14 @@ public enum SignalType : Int32 {
     /// - Parameter rawValue: Signal number
     public init(rawValue: Int32) {
         switch rawValue {
-        case  1: self = .hup;   case  2: self = .int;       case  3: self = .quit;  case  4: self = .ill;
-        case  5: self = .trap   case  6: self = .abrt;      case  7: self = .poll;  case  8: self = .fpe;
-        case  9: self = .kill;  case 10: self = .bus        case 11: self = .segv;  case 12: self = .sys;
-        case 13: self = .pipe;  case 14: self = .alrm;      case 15: self = .term   case 16: self = .urg;
-        case 17: self = .stop;  case 18: self = .stp;       case 19: self = .cont;  case 20: self = .chld
-        case 21: self = .ttin;  case 22: self = .ttou;      case 23: self = .io;    case 24: self = .xcpu;
-        case 25: self = .xfsz   case 26: self = .vtalrm;    case 27: self = .prof;  case 28: self = .winch;
-        case 29: self = .info;  case 30: self = .usr1       case 31: self = .usr2
+        case  1: self = .hup   case  2: self = .int     case  3: self = .quit  case  4: self = .ill
+        case  5: self = .trap  case  6: self = .abrt    case  7: self = .poll  case  8: self = .fpe
+        case  9: self = .kill  case 10: self = .bus     case 11: self = .segv  case 12: self = .sys
+        case 13: self = .pipe  case 14: self = .alrm    case 15: self = .term  case 16: self = .urg
+        case 17: self = .stop  case 18: self = .stp     case 19: self = .cont  case 20: self = .chld
+        case 21: self = .ttin  case 22: self = .ttou    case 23: self = .io    case 24: self = .xcpu
+        case 25: self = .xfsz  case 26: self = .vtalrm  case 27: self = .prof  case 28: self = .winch
+        case 29: self = .info  case 30: self = .usr1    case 31: self = .usr2
         default: self = .unknown
         }
     }

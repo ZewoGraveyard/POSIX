@@ -142,7 +142,7 @@ public class POSIXTests : XCTestCase {
         try Signal.trap(signal: .usr1, action: .handle) { signal in
             signalHandled = true
         }
-        Signal.killPid(signal: .usr1)
+        try Signal.killPid(signal: .usr1)
         XCTAssert(signalHandled, "Signal was not handled. Failed!")
     }
     
@@ -164,6 +164,16 @@ public class POSIXTests : XCTestCase {
         do {
             try Signal.trap(signal: .usr1, action: .handle)
         } catch SignalError.invalidTrapCombination {
+            // Ok!
+        } catch {
+            XCTFail("Raised the wrong exception")
+        }
+    }
+    
+    func testSignalSendInvalidSignal() throws {
+        do {
+            try Signal.killPid(signal: .unknown)
+        } catch SignalError.invalidSignal {
             // Ok!
         } catch {
             XCTFail("Raised the wrong exception")

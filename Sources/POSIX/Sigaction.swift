@@ -126,9 +126,11 @@ public typealias SignalHandler = (SignalType)->Void
 ///
 /// - cannotHandle(signal:): thrown when the signal cannot be handled or ignored
 /// - invalidTrapCombination: attempted to use an invalid combination for trapping signals
+/// - invalidSignal: attempted to use an invalid signal
 public enum SignalError: Error, Hashable {
     case cannotHandle(signal: SignalType)
     case invalidTrapCombination
+    case invalidSignal
 
     public var hashValue: Int {
         switch self {
@@ -136,6 +138,8 @@ public enum SignalError: Error, Hashable {
             return signal.hashValue
         case .invalidTrapCombination:
             return 0xcafe
+        case .invalidSignal:
+            return 0x51541
         }
     }
     
@@ -197,9 +201,11 @@ public struct Signal {
     /// - parameters:
     ///     - pid: The pid to send the signal to. Defaults to current process
     ///     - signal: What signal to send.
-    public static func killPid(pid: pid_t = getpid(), signal: SignalType) {
+    ///
+    /// - throws: SignalError.invalidSignal if provided signal is .unknown
+    public static func killPid(pid: pid_t = getpid(), signal: SignalType) throws {
         guard signal != .unknown else {
-            return
+            throw SignalError.invalidSignal
         }
         kill(pid, signal.rawValue)
     }

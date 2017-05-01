@@ -156,15 +156,15 @@ public class POSIXTests : XCTestCase {
     func testSignalWrongTrapCombinations() {
         do {
             try Signal.trap(signal: .kill, action: .ignore)
-        } catch let error as SignalError {
-            XCTAssertEqual(error, SignalError.cannotHandle(signal: .kill), "Invalid raised exception")
+        } catch SignalError.cannotHandle(signal: let signalType) {
+            XCTAssertEqual(signalType, .kill, "Invalid raised exception")
         } catch {
             XCTFail("Wrong thrown error")
         }
         do {
             try Signal.trap(signal: .usr1, action: .handle)
-        } catch let error as SignalError {
-            XCTAssertEqual(error, SignalError.invalidTrapCombination, "Invalid raised exception")
+        } catch SignalError.invalidTrapCombination {
+            // Ok!
         } catch {
             XCTFail("Raised the wrong exception")
         }

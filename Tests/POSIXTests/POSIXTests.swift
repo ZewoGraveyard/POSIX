@@ -190,6 +190,7 @@ extension POSIXTests {
             ("testSignalDelivery", testSignalDelivery),
             ("testSignalTypeEnum", testSignalTypeEnum),
             ("testSignalWrongTrapCombinations", testSignalWrongTrapCombinations),
+            ("testSignalSendInvalidSignal", testSignalSendInvalidSignal)
         ]
     }
 }

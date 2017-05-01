@@ -152,6 +152,23 @@ public class POSIXTests : XCTestCase {
             XCTAssertEqual(signal.rawValue, Int32(sig), "Invalid signal type")
         }
     }
+    
+    func testSignalWrongTrapCombinations() {
+        do {
+            try Signal.trap(signal: .kill, action: .ignore)
+        } catch let error as SignalError {
+            XCTAssertEqual(error, SignalError.cannotHandle(signal: .kill), "Invalid raised exception")
+        } catch {
+            XCTFail("Wrong thrown error")
+        }
+        do {
+            try Signal.trap(signal: .usr1, action: .handle)
+        } catch let error as SignalError {
+            XCTAssertEqual(error, SignalError.invalidTrapCombination, "Invalid raised exception")
+        } catch {
+            XCTFail("Raised the wrong exception")
+        }
+    }
 }
 
 extension POSIXTests {
@@ -161,15 +178,8 @@ extension POSIXTests {
             ("testDescription", testDescription),
             ("testLastOperationError", testLastOperationError),
             ("testSignalDelivery", testSignalDelivery),
+            ("testSignalTypeEnum", testSignalTypeEnum),
+            ("testSignalWrongTrapCombinations", testSignalWrongTrapCombinations),
         ]
-    }
-}
-
-struct SignalDelegate {
-    var signalHandled: Bool = false
-
-    mutating func signalHandler(signal: SignalType) {
-        signalHandled = true
-        print ("Signal handled")
     }
 }

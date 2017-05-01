@@ -126,9 +126,22 @@ public typealias SignalHandler = (SignalType)->Void
 ///
 /// - cannotHandle(signal:): thrown when the signal cannot be handled or ignored
 /// - invalidTrapCombination: attempted to use an invalid combination for trapping signals
-public enum SignalError: Error {
+public enum SignalError: Error, Hashable {
     case cannotHandle(signal: SignalType)
     case invalidTrapCombination
+
+    public var hashValue: Int {
+        switch self {
+        case .cannotHandle(let signal):
+            return signal.hashValue
+        case .invalidTrapCombination:
+            return 0xcafe
+        }
+    }
+    
+    public static func ==(a: SignalError, b: SignalError) -> Bool {
+        return a.hashValue == b.hashValue
+    }
 }
 
 /// This class encapsulates all necessary functionality to handle signals sent

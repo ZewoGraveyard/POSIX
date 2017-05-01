@@ -136,6 +136,22 @@ public class POSIXTests : XCTestCase {
             }
         }
     }
+
+    func testSignalDelivery() throws {
+        var signalHandled = false
+        try Signal.trap(signal: .usr1, action: .handle) { signal in
+            signalHandled = true
+        }
+        Signal.killPid(signal: .usr1)
+        XCTAssert(signalHandled, "Signal was not handled. Failed!")
+    }
+    
+    func testSignalTypeEnum() {
+        for sig in 1...31 {
+            let signal = SignalType(rawValue: Int32(sig))
+            XCTAssertEqual(signal.rawValue, Int32(sig), "Invalid signal type")
+        }
+    }
 }
 
 extension POSIXTests {
@@ -144,6 +160,16 @@ extension POSIXTests {
             ("testCreation", testCreation),
             ("testDescription", testDescription),
             ("testLastOperationError", testLastOperationError),
+            ("testSignalDelivery", testSignalDelivery),
         ]
+    }
+}
+
+struct SignalDelegate {
+    var signalHandled: Bool = false
+
+    mutating func signalHandler(signal: SignalType) {
+        signalHandled = true
+        print ("Signal handled")
     }
 }

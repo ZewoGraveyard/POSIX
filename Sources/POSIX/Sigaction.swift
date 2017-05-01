@@ -17,70 +17,71 @@ import CPOSIX
 /// This enumaration declares all signals according to header file signal.h,
 /// exposing them to swift
 /// - seealso: sys/signal.h on Darwin platforms
+///
+/// - hup: Hangup
+/// - int: Interrupt
+/// - quit: Quit
+/// - ill: Illegal instruction
+/// - trap: Trace trap
+/// - abrt: Abort
+/// - poll: Pollable event
+/// - fpe: Floating point exception
+/// - kill: Process kill. Cannot be caught or ignored
+/// - bus: Bus error
+/// - segv: Segmentation violation
+/// - sys: Bad argument to system call
+/// - pipe: Write to a pipe with no one to read it
+/// - alrm: Alarm clock
+/// - term: Software terminal signal from kill
+/// - urg: Urgent condition on I/O Channel
+/// - stop: Sendable STOP signal not from TTY. Cannot be caught or ignored
+/// - stp: Stop signal from TTY
+/// - cont: Continue a stopped process
+/// - chld: To parent, on child stop or exit
+/// - ttin: To readers pgrp upon background tty read
+/// - ttou: Like TTIN for output
+/// - io: Input/Output possible signal
+/// - xcpu: Exceeded CPU time limit
+/// - xfsz: Exceeded fil size limit
+/// - vtalrm: Virtual time alarm
+/// - prof: Profiling time alarm
+/// - winch: Window size changes
+/// - info: Information request
+/// - usr1: User-defined signal 1
+/// - usr2: User-defined signal 2
+/// - unknown: Unknown or unsupported signal
 public enum SignalType : Int32 {
-    /// Hangup
-    case hup = 1
-    /// Interrupt
+    case hup    = 1
     case int    = 2
-    /// Quit
     case quit   = 3
-    /// Illegal instruction
     case ill    = 4
-    /// Trace trap
     case trap   = 5
-    /// Abort
     case abrt   = 6
-    /// Pollable event
     case poll   = 7
-    /// Floating point exception
     case fpe    = 8
-    /// Kill - cannot be caught or ignored
     case kill   = 9
-    /// Bus error
     case bus    = 10
-    /// Segmentation violation
     case segv   = 11
-    /// Bad argument to system call
     case sys    = 12
-    /// Write on a pipe with no one to read it
     case pipe   = 13
-    /// Alarm clock
     case alrm   = 14
-    /// Software termination signal from kill
     case term   = 15
-    /// Urgent condition on IO channel
     case urg    = 16
-    /// Sendable stop signal not from TTY
     case stop   = 17
-    /// Stop signal from TTY
     case stp    = 18
-    /// Continue a stopped process
     case cont   = 19
-    /// To parent, on child stop or exit
     case chld   = 20
-    /// To readers pgrp upon background tty read
     case ttin   = 21
-    /// Like TTIN for output
     case ttou   = 22
-    /// Input/output possible signal
     case io     = 23
-    /// Exceeded CPU time limit
     case xcpu   = 24
-    /// Exceeded file size limit
     case xfsz   = 25
-    /// Virtual time alarm
     case vtalrm = 26
-    /// Profiling time alarm
     case prof   = 27
-    /// Window size changes
     case winch  = 28
-    /// Information request
     case info   = 29
-    /// User-defined signal 1
     case usr1   = 30
-    /// User-defined signal 2
     case usr2   = 31
-    /// Unknown or not supported signal
     case unknown
     
     /// Initializer that avoids failable initialization. If the raw value is not recognized,
@@ -103,39 +104,75 @@ public enum SignalType : Int32 {
 }
 
 /// Defines the kind of action to take when a signal is delivered
+///
+/// - ignore: Ignores the signal. If the signal gets delivered to the process,
+/// it will have no effect.
+/// - useDefault: Uses default handler for the signal being delivered to the
+/// process.
+/// - handle: Handles the signal delivery by calling a custom handler.
 public enum SignalAction : Int32 {
-    /// Ignores the signal. Does nothing.
     case ignore = 0
-    /// Use a default handler
     case useDefault = 1
-    /// Let the delegate handle the signal.
     case handle = 2
 }
 
-public protocol SignalHandlerDelegate {
-    mutating func handleSignal(signal: SignalType)
+/// Type for signal handlers
+///
+/// - parameters:
+///     SignalType: The type of raised signal. Identifies the signal for the handler
+public typealias SignalHandler = (SignalType)->Void
+
+/// Errors raised by Signal handler routines
+///
+/// - cannotHandle(signal:): thrown when the signal cannot be handled or ignored
+/// - invalidTrapCombination: attempted to use an invalid combination for trapping signals
+public enum SignalError: Error {
+    case cannotHandle(signal: SignalType)
+    case invalidTrapCombination
 }
 
-public typealias SignalResponder = (SignalType?)->Void
-
-/// This class encapsulates all necessary functionality to handle signals sent by a given operating system.
-/// - remarks: 
-/// By design, this struct have only static methods. It was done that way because of the nature of signals: they
-/// are delivered to the process, not to a given scope within the process. Also, sigaction system call is global
-/// to the process. Therefore, it means that Signal structure must be a singleton. Since sigaction need a method
-/// from a static structure, it was preferred to use only static methods and properties instead of sticking with
+/// This class encapsulates all necessary functionality to handle signals sent
+/// by a given operating system.
+///
+/// - Throws
+///    - cannotHandle(signal:): signal cannot be handled or ignored
+///    - invalidTrapCombination: attempted an invalid combination to trap
+///    signals.
+///
+/// - remarks:
+/// By design, this struct have only static methods. It was done that way
+/// because of the nature of signals: they are delivered to the process, not to
+/// a given scope within the process. Also, sigaction system call is global to
+/// the process. Therefore, it means that Signal structure must be a
+/// singleton. Since sigaction need a method from a static structure, it was
+/// preferred to use only static methods and properties instead of sticking with
 /// a normal singleton implementation.
 public struct Signal {
-    /// Delegate. It can respond to signal events.
-    public static var delegate : SignalHandlerDelegate?
+    /// Table of signal handlers
+    static var signalTable: [SignalType:SignalHandler] = [:]
     
-    /// Adjusts how a given signal will be handled when delivered to the process.
+    /// Sets a trap for a given signal, providing an action and a handler.
+    ///
     /// - parameters:
     ///     - signal: Signal to add treatment to
-    ///     - action: What to do when the signal is delivered.
-    public static func setTrap(signal: SignalType, action: SignalAction) {
-        guard signal != .unknown else {
-            return
+    ///     - action: What to do when the signal is delivered
+    ///     - handler: A closure that will be called when the signal is delivered.
+    ///
+    /// - remarks:
+    /// If the action is .ignore or .useDefault, the handler parameter will be
+    /// ignored. The handler will be used only if the action is .handle.
+    ///
+    /// Signals stop and kill cannot be ignored or trapped. Trying to do so will
+    /// raise an exception.
+    public static func trap(signal: SignalType, action: SignalAction, handler: SignalHandler? = nil) throws {
+        guard signal != .unknown && signal != .stop && signal != .kill else {
+            throw SignalError.cannotHandle(signal: signal)
+        }
+        guard action != .handle || handler != nil else {
+            throw SignalError.invalidTrapCombination
+        }
+        if action == .handle {
+            signalTable[signal] = handler!
         }
         CPOSIXInstallSignalHandler(signal.rawValue, action.rawValue) { (signal) in
             Signal.handleSignal(signal: signal)
@@ -154,13 +191,14 @@ public struct Signal {
         kill(pid, signal.rawValue)
     }
     
-    /// Signal handler. Wraps a call to the delegate, if available.
+    /// Signal handler. Wraps a call to the proper signal handler, if available.
+    ///
     /// - parameters:
     ///     - signal: Signal delivered to the process.
     static func handleSignal(signal: Int32) {
-        guard Signal.delegate != nil else {
-            return
+        let receivedSignal = SignalType(rawValue: signal)
+        if let signalHandler = signalTable[receivedSignal] {
+            signalHandler(receivedSignal)
         }
-        Signal.delegate!.handleSignal(signal: SignalType(rawValue:signal))
     }
 }

@@ -173,6 +173,15 @@ public class POSIXTests : XCTestCase {
             // Ok!
         }
     }
+    
+    func testSignalErrorHashes() {
+        let a = SignalError.cannotHandle(signal: .kill)
+        let b = SignalError.cannotHandle(signal: .kill)
+        let c = SignalError.cannotHandle(signal: .stop)
+        XCTAssertEqual(a, b, "Should be equal")
+        XCTAssertNotEqual(a, c, "Should not be equal")
+        XCTAssertNotEqual(b, c, "Should not be equal")
+    }
 }
 
 extension POSIXTests {
@@ -184,7 +193,8 @@ extension POSIXTests {
             ("testSignalDelivery", testSignalDelivery),
             ("testSignalTypeEnum", testSignalTypeEnum),
             ("testSignalWrongTrapCombinations", testSignalWrongTrapCombinations),
-            ("testSignalSendInvalidSignal", testSignalSendInvalidSignal)
+            ("testSignalSendInvalidSignal", testSignalSendInvalidSignal),
+            ("testSignalErrorHashes", testSignalErrorHashes),
         ]
     }
 }

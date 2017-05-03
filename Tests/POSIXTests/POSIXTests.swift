@@ -235,6 +235,38 @@ public class POSIXTests : XCTestCase {
             XCTFail("Raised an unexpected exception")
         }
     }
+    
+    func testSignalFailingTrapList() {
+        var raised = false
+        do {
+            try Signal.trap(for: .cont, .chld, .kill, .unknown, .stop) { (signal) in
+                print("Trapped!")
+            }
+        } catch {
+            raised = true
+        }
+        XCTAssertTrue(raised, "Expected exception")
+    }
+    
+    func testSignalFailingIgnoreList() {
+        var raised = false
+        do {
+            try Signal.ignore(these: .cont, .chld, .kill, .unknown, .stop)
+        } catch {
+            raised = true
+        }
+        XCTAssertTrue(raised, "Expected exception")
+    }
+    
+    func testSignalFailingDefaultList() {
+        var raised = false
+        do {
+            try Signal.useDefault(for: .cont, .chld, .kill, .unknown, .stop)
+        } catch {
+            raised = true
+        }
+        XCTAssertTrue(raised, "Expected exception")
+    }
 }
 
 extension POSIXTests {

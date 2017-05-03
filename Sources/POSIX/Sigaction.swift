@@ -196,6 +196,50 @@ public struct Signal {
         }
     }
     
+    /// Convenience method to add several signal handlers at once.
+    ///
+    /// - Parameters:
+    ///   - signals: List of signals to handle
+    ///   - handler: Handler that will handle the signals
+    /// - Throws: SignalError.cannotHandle if signals contains .unknown, .stop or .kill.
+    ///
+    /// - Remarks:
+    /// This method will schedule the same signal handler for all provided signals. So, it is the responsibility of 
+    /// the signal handler to select the proper behavior for each received signal.
+    public static func trap(for signals: SignalType..., handler: @escaping SignalHandler) throws {
+        for signal in signals {
+            guard signal != .unknown && signal != .stop && signal != .kill else {
+                throw SignalError.cannotHandle(signal: signal)
+            }
+            signalTable[signal] = handler
+            CPOSIXInstallSignalHandler(signal.rawValue, SignalAction.handle.rawValue) { (signal) in
+                Signal.handleSignal(signal: signal)
+            }
+        }
+    }
+    
+    /// Convenience method. Use default signal actions for the provided list of signals.
+    ///
+    /// - Parameter signals: List of signals to use default signal handling
+    /// - Throws: SignalError.cannotHandle if signals contains .unknown, .stop or .kill.
+    public static func useDefault(for signals: SignalType...) throws {
+        for signal in signals {
+            signalTable.removeValue(forKey: signal)
+            try trap(signal: signal, action: .useDefault)
+        }
+    }
+    
+    /// Convenience method. Ignore the provided list of signals
+    ///
+    /// - Parameter signals: List of signals to ignore
+    /// - Throws: SignalError.cannotHandle if signals contains .unknown, .stop or .kill.
+    public static func ignore(these signals: SignalType...) throws {
+        for signal in signals {
+            signalTable.removeValue(forKey: signal)
+            try trap(signal: signal, action: .ignore)
+        }
+    }
+
     /// Sends a signal to a given process
     ///
     /// - parameters:

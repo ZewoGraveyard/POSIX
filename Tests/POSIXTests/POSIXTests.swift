@@ -182,6 +182,53 @@ public class POSIXTests : XCTestCase {
         XCTAssertNotEqual(a, c, "Should not be equal")
         XCTAssertNotEqual(b, c, "Should not be equal")
     }
+    
+    func testSignalHandlingFromClass() {
+        let signalHandler = SignalHandlerClass()
+        do {
+            try Signal.trap(signal: .usr1, action: .handle, handler: signalHandler.handleSignal(signal:))
+            try Signal.killPid(signal: .usr1)
+        } catch {
+            XCTFail("Failed to trap/kill")
+        }
+        XCTAssertTrue(signalHandler.signalHandled, "Signal not handled")
+    }
+    
+    func testSignalTrapMultiple() {
+        var num = 0
+        do {
+            try Signal.trap(for: .usr1, .usr2) { (signal) in
+                num += 1
+            }
+            try Signal.killPid(signal: .usr1)
+            try Signal.killPid(signal: .usr2)
+        } catch {
+            XCTFail("Raised an unexpected exception")
+        }
+        XCTAssertEqual(num, 2, "Failed to catch signals")
+    }
+    
+    func testSignalIgnoreMultiple() {
+        do {
+            try Signal.ignore(these: .usr1, .usr2)
+            try Signal.killPid(signal: .usr1)
+            try Signal.killPid(signal: .usr2)
+        } catch {
+            XCTFail("Raised an unexpected exception")
+        }
+    }
+    
+    func testSignalDefaultMultiple() {
+        do {
+            try Signal.trap(for: .chld, .cont) { (signal) in
+                XCTFail("Handler cannot be called!")
+            }
+            try Signal.useDefault(for: .chld, .cont)
+            try Signal.killPid(signal: .cont)
+        } catch {
+            XCTFail("Raised an unexpected exception")
+        }
+    }
 }
 
 extension POSIXTests {
@@ -195,6 +242,18 @@ extension POSIXTests {
             ("testSignalWrongTrapCombinations", testSignalWrongTrapCombinations),
             ("testSignalSendInvalidSignal", testSignalSendInvalidSignal),
             ("testSignalErrorHashes", testSignalErrorHashes),
+            ("testSignalHandlingFromClass", testSignalHandlingFromClass),
+            ("testSignalTrapMultiple", testSignalTrapMultiple),
+            ("testSignalIgnoreMultiple", testSignalIgnoreMultiple),
+            ("testSignalDefaultMultiple", testSignalDefaultMultiple),
         ]
+    }
+}
+
+class SignalHandlerClass {
+    var signalHandled = false
+    
+    func handleSignal(signal: SignalType) {
+            signalHandled = true
     }
 }

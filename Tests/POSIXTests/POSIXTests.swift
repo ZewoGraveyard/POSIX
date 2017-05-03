@@ -181,6 +181,12 @@ public class POSIXTests : XCTestCase {
         XCTAssertEqual(a, b, "Should be equal")
         XCTAssertNotEqual(a, c, "Should not be equal")
         XCTAssertNotEqual(b, c, "Should not be equal")
+        let d = SignalError.invalidTrapCombination
+        let e = SignalError.invalidTrapCombination
+        let f = SignalError.invalidSignal
+        XCTAssertEqual(d, e, "Should be equal")
+        XCTAssertNotEqual(d, f, "Should not be equal")
+        XCTAssertNotEqual(e, f, "Should not be equal")
     }
     
     func testSignalHandlingFromClass() {

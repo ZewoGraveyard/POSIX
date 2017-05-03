@@ -224,7 +224,7 @@ public class POSIXTests : XCTestCase {
                 XCTFail("Handler cannot be called!")
             }
             try Signal.useDefault(for: .chld, .cont)
-            try Signal.killPid(signal: .cont)
+            try Signal.killPid(signal: .chld)
         } catch {
             XCTFail("Raised an unexpected exception")
         }

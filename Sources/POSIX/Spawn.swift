@@ -17,11 +17,13 @@ extension SpawnError : CustomStringConvertible {
     }
 }
 
+#if !os(watchOS) && !os(tvOS)
 public func spawn(arguments: [String]) throws -> PID {
     let argv: [UnsafeMutablePointer<CChar>?] = arguments.map {
         $0.withCString(strdup)
     }
 
+    
     defer {
         for case let a? in argv {
             free(a)
@@ -61,3 +63,4 @@ public func spawn(arguments: [String]) throws -> PID {
 
     return pid
 }
+#endif
